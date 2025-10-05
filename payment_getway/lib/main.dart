@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:payment_getway/screens/razorpay_payment.dart';
+import 'package:payment_getway/core/app_config.dart';
+import 'package:payment_getway/screens/landing_screen.dart';
+import 'package:payment_getway/screens/users/models/database_helper.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppConfig.instance.load();
+
+  await DatabaseHelper.instance.initDb();
+  await DatabaseHelper.instance.initializeUsers();
   runApp(const MyApp());
 }
 
@@ -16,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: RazorPaymentContainer(),
+      home: LandingScreen(),
     );
   }
 }

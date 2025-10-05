@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:decimal/decimal.dart';
 import 'package:equatable/equatable.dart';
+import 'package:payment_getway/core/app_config.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 part 'payment_event.dart';
@@ -42,7 +43,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     ));
 
     final options = {
-      'key': 'rzp_test_RNrCqXfo4M0jBf',
+      'key': AppConfig.instance.razorpayKey,
       'amount': amountInPaise,
       'name': 'Payment',
       'description': 'Payment for order',
