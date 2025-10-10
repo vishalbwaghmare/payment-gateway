@@ -108,7 +108,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       } else {
         message = "An unknown error occurred during sign-up.";
       }
-      print("SignUp failed with Firebase error: ${e.code}");
       emit(state.copyWith(formStatus: FormSubmissionStatus.failure,errorMessage: message));
     } catch (e) {
       emit(state.copyWith(
