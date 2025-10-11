@@ -27,9 +27,9 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
 
@@ -66,6 +66,7 @@ class _SignUpState extends State<SignUp> {
   builder: (context, state) {
     return Scaffold(
       body: Container(
+        height: double.infinity,
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -74,155 +75,157 @@ class _SignUpState extends State<SignUp> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Column(
-          children: [
-            const SizedBox(height: 120),
-            CircleAvatar(
-              backgroundColor: Colors.white70,
-              radius: 90,
-              child: Icon(Icons.person, size: 90, color: Colors.grey),
-            ),
-            const SizedBox(height: 50),
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: _emailController,
-                    onChanged: (email){
-                      context.read<LoginBloc>().add(OnEmailChangedEvent(email));
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Enter your email',
-                      errorText: state.email.isEmpty || state.isPasswordValid ? null : state.errorMessage,
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.black, width: 1.5),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.black12, width: 1),
-                      ),
-                      suffixIconColor: Colors.black,
-                      labelStyle: TextStyle(color: Colors.blueGrey),
-                      hintStyle: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: _passwordController,
-                    onChanged: (password){
-                      context.read<LoginBloc>().add(OnPasswordChangedEvent(password));
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Create your password',
-                      errorText: state.password.isEmpty || state.isPasswordValid ? null : "Please enter a valid password",
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.black, width: 1.5),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.black12, width: 1),
-                      ),
-                      suffixIconColor: Colors.black,
-                      labelStyle: TextStyle(color: Colors.blueGrey),
-                      hintStyle: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: _confirmPasswordController,
-                    onChanged: (value){
-                      context.read<LoginBloc>().add(OnConfirmPasswordChangedEvent(value));
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Confirm password',
-                      errorText: state.confirmPassword.isEmpty || state.doPasswordsMatch ? null : "Passwords do not match",
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.black, width: 1.5),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.black12, width: 1),
-                      ),
-                      suffixIconColor: Colors.black,
-                      labelStyle: TextStyle(color: Colors.blueGrey),
-                      hintStyle: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  SizedBox(
-                    width: 200,
-                    child: ElevatedButton(
-                      onPressed: state.isEmailValid && state.formStatus != FormSubmissionStatus.loading
-                          ?() {
-                        context.read<LoginBloc>().add(OnSignUpEvent(state.email, state.password));
-                      } : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Text("Sign up"),
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Divider(thickness: 1, color: Colors.white),
-                      ),
-                      Text(
-                        " Or ",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(thickness: 1, color: Colors.white),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Already have an account?",
-                        style: TextStyle(color: Colors.white, fontSize: 14),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            FadePageRoute(
-                              child: BlocProvider(
-                                create: (context) => LoginBloc(
-                                  authenticationRepository: context.read<FirebaseAuthenticationRepository>(),
-                                ),
-                                child: LoginPage(),
-                              ),
-                            ),
-                          );
-                        },
-                        style: TextButton.styleFrom(
-                          splashFactory: NoSplash.splashFactory,
-                        ),
-                        child: Text(
-                          "Login",
-                          style: TextStyle(color: Colors.cyan, fontSize: 14),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 120),
+              CircleAvatar(
+                backgroundColor: Colors.white70,
+                radius: 90,
+                child: Icon(Icons.person, size: 90, color: Colors.grey),
               ),
-            ),
-          ],
+              const SizedBox(height: 50),
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _emailController,
+                      onChanged: (email){
+                        context.read<LoginBloc>().add(OnEmailChangedEvent(email));
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Enter your email',
+                        errorText: state.email.isEmpty || state.isPasswordValid ? null : state.errorMessage,
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.black, width: 1.5),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.black12, width: 1),
+                        ),
+                        suffixIconColor: Colors.black,
+                        labelStyle: TextStyle(color: Colors.blueGrey),
+                        hintStyle: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _passwordController,
+                      onChanged: (password){
+                        context.read<LoginBloc>().add(OnPasswordChangedEvent(password));
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Create your password',
+                        errorText: state.password.isEmpty || state.isPasswordValid ? null : "Please enter a valid password",
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.black, width: 1.5),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.black12, width: 1),
+                        ),
+                        suffixIconColor: Colors.black,
+                        labelStyle: TextStyle(color: Colors.blueGrey),
+                        hintStyle: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                      onChanged: (value){
+                        context.read<LoginBloc>().add(OnConfirmPasswordChangedEvent(value));
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Confirm password',
+                        errorText: state.confirmPassword.isEmpty || state.doPasswordsMatch ? null : "Passwords do not match",
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.black, width: 1.5),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.black12, width: 1),
+                        ),
+                        suffixIconColor: Colors.black,
+                        labelStyle: TextStyle(color: Colors.blueGrey),
+                        hintStyle: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    SizedBox(
+                      width: 200,
+                      child: ElevatedButton(
+                        onPressed: state.isEmailValid && state.formStatus != FormSubmissionStatus.loading
+                            ?() {
+                          context.read<LoginBloc>().add(OnSignUpEvent(state.email, state.password));
+                        } : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text("Sign up"),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Divider(thickness: 1, color: Colors.white),
+                        ),
+                        Text(
+                          " Or ",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Expanded(
+                          child: Divider(thickness: 1, color: Colors.white),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Already have an account?",
+                          style: TextStyle(color: Colors.white, fontSize: 14),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              FadePageRoute(
+                                child: BlocProvider(
+                                  create: (context) => LoginBloc(
+                                    authenticationRepository: context.read<FirebaseAuthenticationRepository>(),
+                                  ),
+                                  child: LoginView(),
+                                ),
+                              ),
+                            );
+                          },
+                          style: TextButton.styleFrom(
+                            splashFactory: NoSplash.splashFactory,
+                          ),
+                          child: Text(
+                            "Login",
+                            style: TextStyle(color: Colors.cyan, fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,9 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:payment_getway/screens/login/bloc/login_bloc.dart';
-import 'package:payment_getway/screens/login/repository/authentication_repository.dart';
+import 'package:payment_getway/core/fade_page_route.dart';
 import 'package:payment_getway/screens/razorpay_payment.dart';
 import 'package:payment_getway/screens/users/presentation/user_screen.dart';
 
@@ -54,13 +52,7 @@ class _LandingScreenState extends State<LandingScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => BlocProvider(
-                      create: (context) =>
-                          LoginBloc(authenticationRepository: context.read<FirebaseAuthenticationRepository>(),),
-                      child: LoginPage(),
-                    ),
-                  ),
+                  FadePageRoute(child: LoginPage())
                 );
               },
               style: ElevatedButton.styleFrom(

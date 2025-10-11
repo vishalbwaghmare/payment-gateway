@@ -11,7 +11,7 @@ class AppProviders extends StatelessWidget{
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
         providers: [
-          RepositoryProvider<FirebaseAuthenticationRepository>(
+          RepositoryProvider<AuthenticationRepository>(
               create: (context) => FirebaseAuthenticationRepository()),
         ],
         child: MyApp(),
