@@ -1,6 +1,6 @@
 part of 'login_bloc.dart';
 
-enum FormSubmissionStatus { initial, loading, success, failure }
+enum FormSubmissionStatus { initial, loading, success, failure, unAuthenticated }
 
 class LoginState extends Equatable {
   final String email;

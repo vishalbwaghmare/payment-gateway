@@ -65,67 +65,7 @@ class _LandingScreenState extends State<LandingScreen> {
               ),
               child: Text("Get started"),
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: IconButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    builder: (context) {
-                      return Container(
-                        padding: EdgeInsets.all(16),
-                        height: 500,
-                        width: double.infinity,
-                        child: Column(
-                          children: [
-                            Text(
-                              "Menu",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black45,
-                              ),
-                            ),
-                            Divider(thickness: 1, color: Colors.grey),
-                            ListTile(
-                              leading: Icon(Icons.payment),
-                              title: Text("Payments"),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        RazorPaymentContainer(),
-                                  ),
-                                );
-                              },
-                            ),
-                            ListTile(
-                              leading: Icon(Icons.person),
-                              title: Text("Users"),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => UserScreen(),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
-                splashRadius: 20,
-                splashColor: Colors.white,
-                icon: Icon(Icons.keyboard_arrow_up_outlined),
-              ),
-            ),
+            SizedBox(height: 30,),
           ],
         ),
       ),

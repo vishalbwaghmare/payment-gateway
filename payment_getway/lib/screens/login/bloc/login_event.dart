@@ -56,3 +56,10 @@ class OnPasswordObscuredEvent extends LoginEvent{
   @override
   List<Object> get props => [];
 }
+
+class OnSignOut extends LoginEvent{
+  const OnSignOut();
+
+  @override
+  List<Object> get props => [];
+}

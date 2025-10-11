@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:payment_getway/core/fade_page_route.dart';
 import 'package:payment_getway/screens/home/home.dart';
+import 'package:payment_getway/screens/home/main_screen.dart';
 import 'package:payment_getway/screens/login/bloc/login_bloc.dart';
 import 'package:payment_getway/screens/login/repository/authentication_repository.dart';
 import 'package:payment_getway/screens/login/sign_up.dart';
@@ -56,7 +57,7 @@ class _LoginViewState extends State<LoginView>{
           ..showSnackBar(SnackBar(content: Text("Login Failed: Please check your credentials"))
           );
     }else if(state.formStatus == FormSubmissionStatus.success){
-      Navigator.pushReplacement(context, FadePageRoute(child: HomeScreen()));
+      Navigator.pushReplacement(context, FadePageRoute(child: MainScreen()));
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(

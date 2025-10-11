@@ -19,6 +19,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<OnLoginFormSubmittedEvent>(_onLoginFormSubmitted);
     on<OnSignUpEvent>(_onSignUpEvent);
     on<OnPasswordObscuredEvent>(_onPasswordObscured);
+    on<OnSignOut>(_onSignOut);
   }
 
   void _onEmailChanged(OnEmailChangedEvent event, Emitter<LoginState> emit) {
@@ -119,5 +120,23 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   void _onPasswordObscured(OnPasswordObscuredEvent event, Emitter<LoginState> emit) {
     emit(state.copyWith(isObscure: !state.isObscure));
+  }
+  
+  Future<void> _onSignOut(OnSignOut event, Emitter<LoginState> emit) async {
+    emit(state.copyWith(
+      formStatus: FormSubmissionStatus.loading
+    ));
+
+    try{
+      await _authenticationRepository.signOut();
+      emit(state.copyWith(
+        formStatus: FormSubmissionStatus.unAuthenticated
+      ));
+    }catch(e){
+      emit(state.copyWith(
+        formStatus: FormSubmissionStatus.failure,
+        errorMessage: "An error occurred during sign-out."
+      ));
+    }
   }
 }
