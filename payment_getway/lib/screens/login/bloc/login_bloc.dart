@@ -13,6 +13,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc({required AuthenticationRepository authenticationRepository})
       : _authenticationRepository = authenticationRepository,
         super(LoginState.initial()) {
+    on<OnNameChangedEvent>(_onNameChanged);
     on<OnEmailChangedEvent>(_onEmailChanged);
     on<OnPasswordChangedEvent>(_onPasswordChanged);
     on<OnConfirmPasswordChangedEvent>(_onConfirmPasswordChanged);
@@ -22,6 +23,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<OnSignOut>(_onSignOut);
   }
 
+
+  void _onNameChanged(OnNameChangedEvent event, Emitter<LoginState> emit) {
+    final isNameValid = event.name.isNotEmpty;
+    emit(state.copyWith(
+        name: event.name,
+        isEmailValid: isNameValid,
+        errorMessage: "",
+        formStatus: FormSubmissionStatus.initial
+    ));
+  }
   void _onEmailChanged(OnEmailChangedEvent event, Emitter<LoginState> emit) {
     final isEmailValid = RegExp(r'\S+@\S+\.\S+').hasMatch(event.email);
     emit(state.copyWith(
@@ -92,10 +103,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     emit(state.copyWith(formStatus: FormSubmissionStatus.loading,errorMessage: ""));
 
     try {
-      await _authenticationRepository.signUpWithEmailAndPassword(state.email, state.password);
+      await _authenticationRepository.signUpWithEmailAndPassword(state.email, state.password,state.name);
 
       emit(state.copyWith(
         formStatus: FormSubmissionStatus.success,
+        name: "",
         email: "",
         password: "",
         confirmPassword: "",

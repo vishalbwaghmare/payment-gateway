@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:payment_getway/core/fade_page_route.dart';
@@ -13,9 +15,9 @@ class SignUpScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (context) => LoginBloc(
-          authenticationRepository: context.read<FirebaseAuthenticationRepository>(),
+          authenticationRepository: context.read<AuthenticationRepository>(),
         ),
-        child: SignUp(),
+        child: const SignUp(),
     );
   }
 }
@@ -27,15 +29,24 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final ImageProvider _loginBgImage = const AssetImage("images/login_bg.jpg");
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(_loginBgImage, context);
+  }
 
 
   @override
   void dispose() {
     super.dispose();
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -70,9 +81,14 @@ class _SignUpState extends State<SignUp> {
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
-          image: DecorationImage(
-            image: AssetImage("images/login_bg.jpg"),
-            fit: BoxFit.cover,
+          gradient: LinearGradient(
+            colors: [
+              Colors.blue,
+              Colors.white70,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomLeft,
+            transform: GradientRotation(pi / -5 ),
           ),
         ),
         child: SingleChildScrollView(
@@ -81,7 +97,7 @@ class _SignUpState extends State<SignUp> {
               const SizedBox(height: 120),
               CircleAvatar(
                 backgroundColor: Colors.white70,
-                radius: 90,
+                radius: 60,
                 child: Icon(Icons.person, size: 90, color: Colors.grey),
               ),
               const SizedBox(height: 50),
@@ -89,6 +105,28 @@ class _SignUpState extends State<SignUp> {
                 key: _formKey,
                 child: Column(
                   children: [
+                    TextFormField(
+                      controller: _nameController,
+                      onChanged: (name){
+                        context.read<LoginBloc>().add(OnNameChangedEvent(name));
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Enter your name',
+                        errorText: state.name.isEmpty && state.isNameValid ? "Please enter your name" : null,
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.black, width: 1.5),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.black12, width: 1),
+                        ),
+                        suffixIconColor: Colors.black,
+                        labelStyle: TextStyle(color: Colors.blueGrey),
+                        hintStyle: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                     TextFormField(
                       controller: _emailController,
                       onChanged: (email){
@@ -156,36 +194,39 @@ class _SignUpState extends State<SignUp> {
                     ),
                     const SizedBox(height: 30),
                     SizedBox(
-                      width: 200,
+                      width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: state.isEmailValid && state.formStatus != FormSubmissionStatus.loading
+                        onPressed: state.isFormValid && state.formStatus != FormSubmissionStatus.loading
                             ?() {
                           context.read<LoginBloc>().add(OnSignUpEvent(state.email, state.password));
                         } : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
+                          backgroundColor: Colors.black,
+                          disabledBackgroundColor: Colors.black26,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: Text("Sign up"),
+                          child: state.formStatus == FormSubmissionStatus.loading
+                              ? const CircularProgressIndicator(color: Colors.white,)
+                              : Text("Sign up", style: TextStyle(color: Colors.white),),
                       ),
                     ),
                     const SizedBox(height: 30),
                     Row(
                       children: [
                         Expanded(
-                          child: Divider(thickness: 1, color: Colors.white),
+                          child: Divider(thickness: 1, color: Colors.blue),
                         ),
                         Text(
                           " Or ",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Expanded(
-                          child: Divider(thickness: 1, color: Colors.white),
+                          child: Divider(thickness: 1, color: Colors.blue),
                         ),
                       ],
                     ),
@@ -195,19 +236,14 @@ class _SignUpState extends State<SignUp> {
                       children: [
                         Text(
                           "Already have an account?",
-                          style: TextStyle(color: Colors.white, fontSize: 14),
+                          style: TextStyle(color: Colors.black, fontSize: 14),
                         ),
                         TextButton(
                           onPressed: () {
                             Navigator.push(
                               context,
                               FadePageRoute(
-                                child: BlocProvider(
-                                  create: (context) => LoginBloc(
-                                    authenticationRepository: context.read<FirebaseAuthenticationRepository>(),
-                                  ),
-                                  child: LoginView(),
-                                ),
+                                child: LoginPage(),
                               ),
                             );
                           },

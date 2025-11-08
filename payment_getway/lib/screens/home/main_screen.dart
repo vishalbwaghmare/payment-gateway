@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:payment_getway/screens/home/home.dart';
 import 'package:payment_getway/screens/login/bloc/login_bloc.dart';
 import 'package:payment_getway/screens/login/repository/authentication_repository.dart';
-import 'package:payment_getway/screens/profile_page.dart';
+import 'package:payment_getway/screens/profile/presentation/profile_page.dart';
 import 'package:payment_getway/screens/home/menu_botttom_sheet.dart';
 
 class MainScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class _MainScreenState extends State<MainScreen> {
 
   static const List<Widget> _pages = <Widget>[
     HomeScreen(),
-    ProfilePageView(),
+    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {

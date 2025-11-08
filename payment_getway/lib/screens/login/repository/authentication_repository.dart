@@ -1,28 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class AuthenticationRepository {
-  /// A stream that notifies about changes to the user's sign-in state.
-  /// Emits the current [User] or null if the user is signed out.
   Stream<User?> get user;
-
-  /// Signs in a user with the given [email] and [password].
-  ///
-  /// Throws an exception if the login fails.
   Future<void> signInWithEmailAndPassword(String email, String password);
-  Future<void> signUpWithEmailAndPassword(String email, String password);
-
-  /// Signs out the current user.
+  Future<void> signUpWithEmailAndPassword(String email, String password, String name);
   Future<void> signOut();
 }
 
-/// A concrete implementation of [AuthenticationRepository] using Firebase.
 class FirebaseAuthenticationRepository implements AuthenticationRepository {
   final FirebaseAuth _firebaseAuth;
+  final FirebaseFirestore _firestore;
 
-  /// Creates a repository, optionally accepting a [FirebaseAuth] instance
-  /// for testing purposes. If none is provided, it uses the default instance.
-  FirebaseAuthenticationRepository({FirebaseAuth? firebaseAuth})
-      : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
+  FirebaseAuthenticationRepository({
+    FirebaseAuth? firebaseAuth,
+    FirebaseFirestore? firestore,
+  })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+        _firestore = firestore ?? FirebaseFirestore.instance; // And end with a semicolon here
 
   @override
   Stream<User?> get user => _firebaseAuth.authStateChanges();
@@ -35,7 +29,6 @@ class FirebaseAuthenticationRepository implements AuthenticationRepository {
         password: password,
       );
     } on FirebaseAuthException {
-      // The BLoC layer will handle this exception.
       rethrow;
     }
   }
@@ -46,17 +39,25 @@ class FirebaseAuthenticationRepository implements AuthenticationRepository {
   }
 
   @override
-  Future<void> signUpWithEmailAndPassword(String email, String password) async{
-    try{
-      await _firebaseAuth.createUserWithEmailAndPassword(
+  Future<void> signUpWithEmailAndPassword(String email, String password, String name) async {
+    try {
+      final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-    } on FirebaseAuthException{
+      if (userCredential.user != null) {
+        await userCredential.user?.updateDisplayName(name);
+
+        await _firestore.collection('users').doc(userCredential.user!.uid).set({
+          'uid': userCredential.user!.uid,
+          'name': name,
+          'email': email,
+          'createdAt': Timestamp.now(),
+        });
+      }
+    } on FirebaseAuthException {
       rethrow;
     }
   }
 }
-
-
