@@ -19,6 +19,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<OnLoadUserProfile>(_onLoadUserProfile);
     on<OnProfilePictureChange>(_onProfilePictureChange);
     on<OnSignOutEvent>(_onSignOutEvent);
+    on<OnChangePasswordEvent>(_onChangePasswordEvent);
   }
 
   Future<void> _onLoadUserProfile(OnLoadUserProfile event, Emitter<ProfileState> emit)async {
@@ -61,5 +62,30 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   }
 
-  Future<void> _onSignOutEvent(OnSignOutEvent event, Emitter<ProfileState> emit)async {}
+  Future<void> _onSignOutEvent(OnSignOutEvent event, Emitter<ProfileState> emit)async {
+    try{
+      await _userProfileRepository.signOut();
+      emit(state.copyWith(status: ProfileStatus.unauthenticated));
+    }catch(e){
+      emit(state.copyWith(
+        status: ProfileStatus.failure,
+        errorMessage: e.toString(),
+      ));
+    }
+  }
+
+  Future<void> _onChangePasswordEvent(OnChangePasswordEvent event, Emitter<ProfileState> emit)async {
+    try{
+      await _userProfileRepository.changePassword();
+      emit(state.copyWith(
+        status: ProfileStatus.success,
+        errorMessage: "Password reset email sent",
+      ));
+    }catch(e){
+      emit(state.copyWith(
+        status: ProfileStatus.failure,
+        errorMessage: e.toString(),
+      ));
+    }
+  }
 }

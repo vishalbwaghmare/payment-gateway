@@ -24,3 +24,9 @@ class OnSignOutEvent extends ProfileEvent{
   @override
   List<Object?> get props => [];
 }
+
+class OnChangePasswordEvent extends ProfileEvent{
+  const OnChangePasswordEvent();
+  @override
+  List<Object?> get props => [];
+}

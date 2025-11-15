@@ -38,14 +38,14 @@ class _ProfilePageViewState extends State<ProfilePageView> {
       listener: (context, state) {
         if (state.status == ProfileStatus.unauthenticated) {
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const LoginView()),
+            MaterialPageRoute(builder: (context) => const LoginPage()),
                 (route) => false,
           );
         } else if (state.status == ProfileStatus.failure) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              SnackBar(content: Text(state.errorMessage ?? 'An error occurred')),
+              SnackBar(content: Text(state.errorMessage)),
             );
         }
       },
@@ -58,39 +58,89 @@ class _ProfilePageViewState extends State<ProfilePageView> {
           appBar: AppBar(
             actions: [IconButton(
                 onPressed: (){
-                  context.read<ProfileBloc>().add(OnSignOutEvent());
+                  context.read<ProfileBloc>().add(const OnSignOutEvent());
                 }, 
                 icon: Icon(Icons.logout))],
           ),
-            body: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: 100,),
-                Center(
-                  child: GestureDetector(
-                    onTap: (){
-                      context.read<ProfileBloc>().add(OnProfilePictureChange());
-                    },
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundImage: state.profilePicture,
-                      child: Icon(Icons.person, size: 50, color: Colors.grey),
+            body: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 100,),
+                  Center(
+                    child: GestureDetector(
+                      onTap: (){
+                        context.read<ProfileBloc>().add(OnProfilePictureChange());
+                      },
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundImage: state.profilePicture,
+                        child: Icon(Icons.person, size: 50, color: Colors.grey),
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 20,),
-                Text(
-                  state.name,
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,
-                      fontFamily: "Roboto"
+                  SizedBox(height: 20,),
+                  Text(
+                    state.name,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontFamily: "Roboto"
+                    ),
                   ),
-                )
-              ],
+                  const SizedBox(height: 16,),
+                  _buildTile(
+                      context,
+                      icon: Icons.edit,
+                      title: state.name,
+                      onTap: (){}
+                  ),
+                  _buildTile(
+                      context,
+                      title: _user?.email ?? "Add your email address",
+                      onTap: (){}
+                  ),
+                  _buildTile(
+                      context,
+                      title: "Change Password",
+                      onTap: (){
+                        context.read<ProfileBloc>().add(OnChangePasswordEvent());
+                      }
+                  ),
+                  _buildTile(
+                      context,
+                      title: "Delete Account",
+                      onTap: (){}
+                  ),
+                ],
+              ),
             ));
       },
     );
   }
+}
+
+Widget _buildTile(
+BuildContext context,{
+   IconData? icon,
+   required String title,
+   Color? textColor,
+   Color? iconColor,
+   required VoidCallback? onTap,
+}){
+  return ListTile(
+    //leading: Icon(icon, color: iconColor ?? Colors.blueAccent,),
+    title: Text(
+      title,
+      style: TextStyle(
+        color: textColor ?? Colors.black,
+        fontWeight: FontWeight.w500,
+      ),
+    ),
+    trailing: Icon(icon, color: iconColor ?? Colors.blueAccent,),
+    onTap: onTap,
+    contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+  );
+
 }

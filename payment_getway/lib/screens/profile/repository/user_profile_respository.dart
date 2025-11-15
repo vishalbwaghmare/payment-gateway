@@ -10,6 +10,7 @@ abstract class UserProfileRepository {
 
   Future<ImageProvider> changeProfilePicture();
   Future<void> signOut();
+  Future<void> changePassword();
 }
 
 class UserProfileRepositoryImpl extends UserProfileRepository{
@@ -59,6 +60,23 @@ class UserProfileRepositoryImpl extends UserProfileRepository{
   @override
   Future<void> signOut() async{
     await _auth.signOut();
+  }
+
+  @override
+  Future<void> changePassword() async{
+    final user = _auth.currentUser;
+    if(user != null && user.email != null){
+      try{
+        await _auth.sendPasswordResetEmail(email: user.email!);
+      }on FirebaseAuthException catch(e){
+        throw Exception('Failed to send password reset email: ${e.message}');
+      }
+      catch (e){
+        throw Exception('An unknown error occurred: $e');
+      }
+    }else{
+      throw Exception("No unauthenticated user found");
+    }
   }
 
 }
